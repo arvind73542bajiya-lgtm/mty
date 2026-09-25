@@ -59,7 +59,7 @@ own_wc = wc - wcl
 tl = BANK_LOAN - wcl
 own_tl = capex - tl
 own = own_tl + own_wc  # promoter brings the balance
-RATE = 0.105  # rate of interest on TL & WC
+RATE = 0.12  # rate of interest on TL & WC
 SUB_PCT = 0.35  # PMEGP margin money: rural, special category
 SUBSIDY = SUB_PCT * cost
 
