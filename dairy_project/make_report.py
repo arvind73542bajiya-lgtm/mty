@@ -66,7 +66,7 @@ SUBSIDY = SUB_PCT * cost
 YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
 UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
-DAYS = 360
+DAYS = 300
 MILK_P = 35
 KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
@@ -188,7 +188,7 @@ for y in range(YEARS):
     cum += pl["gca"][y]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [6.00, 6.50, 7.00, 7.50, 8.00, 8.50, 9.00]
+DRAW = [1.00, 1.00, 1.20, 1.20, 1.40, 1.40, 1.50]
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -357,7 +357,7 @@ s += header() + [Paragraph("STATEMENT OF PROJECTED COST OF PRODUCTION &amp; SALE
 bp = [["Name of Product", "Milk, Gobar Khad"],
       ["Name of Raw Materials", "Green fodder, bhusa, cattle feed, khal, mineral mixture"],
       ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x {YIELD} Ltr)"],
-      ["No. of Working Days", f"{DAYS} days (dairy works all days; ~80% cows in milk at a time)"]]
+      ["No. of Working Days", f"{DAYS} days milk sale in a year; ~80% cows in milk at a time"]]
 s += [tbl(bp, [50, 120], right_from=9, head=False)]
 ut = [["Utilisation", "Capacity %", "Ltr / Day", "Ltr / Year"]]
 for y in range(YEARS):
