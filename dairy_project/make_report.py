@@ -13,7 +13,7 @@ from reportlab.platypus import (PageBreak, Paragraph, SimpleDocTemplate,
 
 NAME = "SH. VISHRAM SINGH GURJAR S/O SH. RAMJI LAL GURJAR"
 ADDR = "Add: Khatana Ki Dhani, Palawas, Post-Jopada, Distt.-Dausa (Raj.)-303501"
-YEARS = 7
+YEARS = 5
 L = 100000.0  # one lakh
 
 # ---------------------------------------------------------------- capital cost
@@ -186,6 +186,8 @@ for y in range(YEARS):
     if payback is None and cum + pl["gca"][y] >= cost:
         payback = y + (cost - cum) / pl["gca"][y]
     cum += pl["gca"][y]
+if payback is None:  # beyond projection period: extend at last year's accrual
+    payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
 DRAW = [1.00, 1.00, 1.20, 1.20, 1.40, 1.40, 1.50]
@@ -508,7 +510,7 @@ cf.append(["Closing balance"] + [f2(r[4]) for r in cf_rows])
 s += [tbl(cf, W5, bold_rows=[7, 14, 17], right_from=1)]
 s += [Spacer(1, 8), Paragraph("Conclusion", H3),
       Paragraph(f"The project is technically feasible and financially viable. With average D.S.C.R. of "
-                f"{avg_dscr:.2f}, the unit can comfortably repay the bank loan within {YEARS} years, "
+                f"{avg_dscr:.2f}, the unit can {'comfortably ' if avg_dscr >= 1.5 else ''}repay the bank loan within {YEARS} years, "
                 "besides generating employment for 3 persons in the village. Bank finance is recommended.", N)]
 s += sign()
 
