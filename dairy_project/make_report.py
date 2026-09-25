@@ -57,25 +57,18 @@ RATE = 0.105  # rate of interest on TL & WC
 SUBSIDY = 0.25 * cost  # PMEGP margin money (rural, special category)
 
 # ---------------------------------------------------------- production & sales
-CAP_LPD = COWS * 15  # installed: 15 Ltr/cow/day
-UTIL = [0.65, 0.70, 0.75, 0.80, 0.80, 0.80, 0.80]
+YIELD = 20  # Ltr/cow/day while in milk
+CAP_LPD = COWS * YIELD  # installed capacity
+UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
 DAYS = 360
-MILK_P, PANEER_P, KHAD_P = 30, 320, 2000
-PANEER_MILK, PANEER_YIELD = 31000, 5.5  # Ltr of milk converted, Ltr per kg
-KHAD_T = 60
+MILK_P = 30
 ESC_SALE = 0.03  # annual price escalation on sales
 
-prod, sales, sales_rows = [], [], []
+prod, sales = [], []
 for y in range(YEARS):
     litres = CAP_LPD * UTIL[y] * DAYS
-    f = (1 + ESC_SALE) ** y
-    pan_kg = PANEER_MILK / PANEER_YIELD
-    m = (litres - PANEER_MILK) * MILK_P * f
-    p = pan_kg * PANEER_P * f
-    k = KHAD_T * KHAD_P * f
     prod.append(litres)
-    sales.append((m + p + k) / L)
-    sales_rows.append((litres - PANEER_MILK, pan_kg, m, p, k))
+    sales.append(litres * MILK_P * (1 + ESC_SALE) ** y / L)
 
 # --------------------------------------------------------------- feed (yr 1)
 green_q = COWS * 20 * 365 / 100  # 20 kg/cow/day
@@ -95,11 +88,9 @@ wages1 = sum(n * s for _, n, s in staff) * 12 / L
 power1 = (6000 * 8 + 12000) / L          # 6000 units @ Rs 8 + diesel/misc
 vet1 = (COWS * 3000 + COWS * 500) / L    # medicine/vet + AI/deworming/vaccination
 admin_items = [("Office & misc. exp.", 12000), ("Travelling & conveyance", 18000),
-               ("Phone & stationery", 6000), ("Paneer packing & marketing", 14000)]
+               ("Phone & stationery", 6000), ("Milk transport to dairy", 14000)]
 admin1 = sum(a for _, a in admin_items) / L
-ins_renew = live * 0.025
-PANEER_COST = 20  # Rs/kg: fuel, citric acid, cloth, packing
-paneer1 = PANEER_MILK / PANEER_YIELD * PANEER_COST / L  # cattle insurance renewal from 2nd year
+ins_renew = live * 0.025  # cattle insurance renewal from 2nd year
 
 # ------------------------------------------------------------- depreciation
 DEP = [("Building & shed", bld, 0.10), ("Plant & machinery", mac, 0.15),
@@ -143,12 +134,11 @@ def tax_new_regime(income_lakh):
 
 
 # ------------------------------------------------------------------ P & L
-pl = {k: [] for k in ["paneer", "feed", "wages", "power", "vet", "ins", "admin", "rm", "int", "dep",
+pl = {k: [] for k in ["feed", "wages", "power", "vet", "ins", "admin", "rm", "int", "dep",
                       "total", "sales", "pbt", "tax", "pat", "gca", "npr"]}
 for y in range(YEARS):
     vol = UTIL[y] / UTIL[0]
     pl["feed"].append(feed1 * vol * 1.05 ** y)
-    pl["paneer"].append(paneer1 * 1.05 ** y)
     pl["wages"].append(wages1 * 1.05 ** y)
     pl["power"].append(power1 * vol * 1.03 ** y)
     pl["vet"].append(vet1 * 1.05 ** y)
@@ -157,7 +147,7 @@ for y in range(YEARS):
     pl["rm"].append(bld * 0.02 + mac * 0.03)
     pl["int"].append(tl_int[y] + wc_int)
     pl["dep"].append(dep[y])
-    tot = sum(pl[k][y] for k in ["feed", "paneer", "wages", "power", "vet", "ins", "admin", "rm", "int", "dep"])
+    tot = sum(pl[k][y] for k in ["feed", "wages", "power", "vet", "ins", "admin", "rm", "int", "dep"])
     pl["total"].append(tot)
     pl["sales"].append(sales[y])
     pbt = sales[y] - tot
@@ -176,7 +166,7 @@ avg_dscr = sum(dscr_a) / sum(dscr_b)
 
 # -------------------------------------------------------------- break-even (yr 1)
 fixed1 = pl["wages"][0] + pl["admin"][0] + pl["rm"][0] + pl["int"][0] + pl["dep"][0] + pl["ins"][0]
-var1 = pl["feed"][0] + pl["paneer"][0] + pl["power"][0] + pl["vet"][0]
+var1 = pl["feed"][0] + pl["power"][0] + pl["vet"][0]
 contrib1 = sales[0] - var1
 bep = fixed1 / contrib1 * 100
 
@@ -267,14 +257,14 @@ bio = [["1", "Name of Project", "Pashupalan and Dairy Udhyog (20 H.F. Cows)"],
        ["2", "Address", ADDR.replace("Add: ", "")],
        ["3", "Proprietor", NAME],
        ["4", "Status", "Proprietorship Firm (OBC)"],
-       ["5", "Business / Activity", "Dairy farming - sale of milk, paneer & gobar khad"],
-       ["6", "Breed / Herd size", "Holstein Friesian (H.F.) cross-bred cows - 20 Nos (12-15 Ltr/day yielders)"],
+       ["5", "Business / Activity", "Dairy farming - sale of milk"],
+       ["6", "Breed / Herd size", "Holstein Friesian (H.F.) cross-bred cows - 20 Nos (20 Ltr/day yielders)"],
        ["7", "Raw Materials", "Green & dry fodder, cattle feed, khal, mineral mixture - easily available locally"],
        ["8", "Promoter Introduction", "Experienced in animal husbandry; already running a buffalo dairy unit"],
        ["9", "Market Opinion", "Very good scope: Dausa is on the Jaipur-Agra highway; ready demand from "
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
-       ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x 15 Ltr)\n"
-                                     f"Utilised (1st Yr): {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%})"],
+       ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x {YIELD} Ltr)\n"
+                                     f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about 16 cows in milk, 4 dry)"],
        ["11", "Employment", "3 persons (1 manager + 1 skilled + 1 un-skilled) + promoter & family"]]
 bio = [[a, b, Paragraph(c.replace("\n", "<br/>"), C)] for a, b, c in bio]
 s += [tbl(bio, [10, 42, 118], right_from=9, head=False)] + sign() + [PageBreak()]
@@ -331,7 +321,7 @@ s += sign() + [PageBreak()]
 # ---- Page 5: livestock, pre-op, WC
 s += header() + [Paragraph("4. Live Stock", H3)]
 lt = [["S.N.", "Particulars", "No.", "Rate", "Amount", "Supplier"],
-      ["1", "H.F. cross-bred cows (2nd/3rd lactation, 12-15 Ltr/day)", str(COWS), f0(COW_RATE),
+      ["1", "H.F. cross-bred cows (2nd/3rd lactation, 20 Ltr/day)", str(COWS), f0(COW_RATE),
        f0(live * L), "Open Market / Cattle Fair"],
       ["", "", "", "Or Say", f"{live:.2f} Lacs", ""]]
 s += [tbl(lt, [10, 72, 12, 18, 24, 34], bold_rows=[1], right_from=2),
@@ -354,9 +344,9 @@ s += sign() + [PageBreak()]
 # ---- Page 6: basic parameters & sales
 s += header() + [Paragraph("STATEMENT OF PROJECTED COST OF PRODUCTION &amp; SALES REALISATION", H2),
                  Paragraph("Basic Parameters", H3)]
-bp = [["Name of Product", "Milk, Paneer, Gobar Khad (vermicompost)"],
+bp = [["Name of Product", "Milk"],
       ["Name of Raw Materials", "Green fodder, bhusa, cattle feed, khal, mineral mixture"],
-      ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x 15 Ltr)"],
+      ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x {YIELD} Ltr)"],
       ["No. of Working Days", f"{DAYS} days (dairy works all days; ~80% cows in milk at a time)"]]
 s += [tbl(bp, [50, 120], right_from=9, head=False)]
 ut = [["Utilisation", "Capacity %", "Ltr / Day", "Ltr / Year"]]
@@ -364,16 +354,13 @@ for y in range(YEARS):
     ut.append([yrs[y], f"{UTIL[y]:.0%}", f0(CAP_LPD * UTIL[y]), f0(prod[y])])
 s += [Spacer(1, 4), tbl(ut, [45, 35, 35, 45], right_from=1)]
 s += [Paragraph("Calculation of Sales Realisation - 1st Year", H3)]
-m_l, pan_kg, m_amt, p_amt, k_amt = sales_rows[0]
 st_ = [["Particulars", "Qty", "Unit", "Rate", "Amount (Rs.)"],
-       ["Milk sale (dairy / direct)", f0(m_l), "Ltr", f0(MILK_P), f0(m_amt)],
-       [f"Paneer ({PANEER_MILK:,} Ltr milk, {PANEER_YIELD} Ltr = 1 kg)", f0(pan_kg), "Kg", f0(PANEER_P), f0(p_amt)],
-       ["Gobar khad / vermicompost", f0(KHAD_T), "Ton", f0(KHAD_P), f0(k_amt)],
+       [f"Milk sale ({CAP_LPD * UTIL[0]:.0f} Ltr/day x {DAYS} days)", f0(prod[0]), "Ltr", f0(MILK_P), f0(sales[0] * L)],
        ["Net Sales Realisation", "", "", "", f0(sales[0] * L)],
        ["", "", "", "Say Rs.", f"{sales[0]:.2f} Lacs"]]
-s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[4], right_from=1),
-      Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the present dairy rate for cow milk. About {PANEER_MILK / DAYS:.0f} Ltr/day "
-                f"is converted into paneer (~{PANEER_MILK / PANEER_YIELD / DAYS:.1f} kg/day) for sale to sweet shops & hotels. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
+s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[2], right_from=1),
+      Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the present dairy rate for cow milk. Whole milk is sold to the dairy "
+                f"collection centre; no other product is taken. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
 s += sign() + [PageBreak()]
 
 # ---- Page 7: cost of production (1st yr)
@@ -407,10 +394,7 @@ s += [Paragraph("(f) Repair &amp; Maintenance", H3),
                 f"<b>Rs. {pl['rm'][0]:.2f} Lacs</b>", N),
       Paragraph("(g) Cattle Insurance", H3),
       Paragraph(f"1st year included in pre-operative cost; renewal from 2nd year @ 2.5% = "
-                f"<b>Rs. {ins_renew:.2f} Lacs</b> p.a.", N),
-      Paragraph("(h) Paneer Making Cost", H3),
-      Paragraph(f"{PANEER_MILK / PANEER_YIELD:,.0f} kg paneer @ Rs. {PANEER_COST}/kg (fuel, citric acid, cloth, "
-                f"packing) = <b>Rs. {paneer1:.2f} Lacs</b>", N)]
+                f"<b>Rs. {ins_renew:.2f} Lacs</b> p.a.", N)]
 s += sign() + [PageBreak()]
 
 # ---- Page 8: profitability statement
@@ -420,7 +404,6 @@ pr = [["Particulars"] + yrs,
       ["Utilised capacity %"] + [f"{u:.0%}" for u in UTIL],
       ["Production (Ltr/day)"] + [f0(CAP_LPD * u) for u in UTIL],
       ["Raw material (feed & fodder)"] + [f2(v) for v in pl["feed"]],
-      ["Paneer making cost"] + [f2(v) for v in pl["paneer"]],
       ["Salary & wages (5% inc.)"] + [f2(v) for v in pl["wages"]],
       ["Power & utilities"] + [f2(v) for v in pl["power"]],
       ["Veterinary & breeding"] + [f2(v) for v in pl["vet"]],
@@ -436,7 +419,7 @@ pr = [["Particulars"] + yrs,
       ["Profit After Tax"] + [f2(v) for v in pl["pat"]],
       ["Gross Cash Accruals"] + [f2(v) for v in pl["gca"]],
       ["Net Profit Ratio % (before tax)"] + [f2(v) for v in pl["npr"]]]
-s += [tbl(pr, W5, bold_rows=[14, 15, 16, 18], right_from=1)]
+s += [tbl(pr, W5, bold_rows=[13, 14, 15, 17], right_from=1)]
 s += [Paragraph("Profit (1st Year)", H3),
       tbl([["Revenue expected per year", f2(sales[0])], ["Less: cost of expenses", f2(pl["total"][0])],
            ["Profit", f2(pl["pbt"][0])]], [135, 35], bold_rows=[2], head=False)]
@@ -481,7 +464,7 @@ s += [tbl(dt2, W5, bold_rows=[5, 9, 10], right_from=1), Spacer(1, 6),
       Paragraph("D.S.C.R. = (Net profit after tax + Interest on T.L. + Depreciation) / (T.L. repayment + Interest)", SM)]
 s += [Paragraph("Break-Even Point (1st Year, Rs. in Lacs)", H2)]
 be = [["Sales", f2(sales[0])],
-      ["Variable cost (feed, paneer making, power, veterinary)", f2(var1)],
+      ["Variable cost (feed, power, veterinary)", f2(var1)],
       ["Contribution (Sales - Variable cost)", f2(contrib1)],
       ["Fixed cost (wages, admin, R&M, interest, depreciation)", f2(fixed1)],
       ["B.E.P. = Fixed cost / Contribution x 100", f"{bep:.2f}%"],
