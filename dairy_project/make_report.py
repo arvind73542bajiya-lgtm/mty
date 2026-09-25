@@ -66,7 +66,7 @@ SUBSIDY = SUB_PCT * cost
 # ---------------------------------------------------------- production & sales
 YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
-UTIL = [0.80] * YEARS   # ~75% of cows in milk at a time, rest dry
+UTIL = [0.75] * YEARS   # ~75% of cows in milk at a time, rest dry
 IN_MILK = round(COWS * UTIL[0])
 DAYS = 350
 MILK_P = 35
