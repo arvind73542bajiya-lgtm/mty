@@ -192,7 +192,7 @@ if payback is None:  # beyond projection period: extend at last year's accrual
     payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [1.00, 1.00, 1.20, 1.20, 1.40, 1.40, 1.50]
+DRAW = [4.00, 4.20, 4.40, 4.50, 4.60, 4.80, 5.00]
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
