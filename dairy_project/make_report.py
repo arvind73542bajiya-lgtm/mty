@@ -1,7 +1,7 @@
-"""Generate the 27-lakh HF-cow dairy project report (PDF).
+"""Generate the 30-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_27_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_30_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -37,7 +37,7 @@ machinery = [  # (particular, qty, rate)
     ("Fans / foggers for summer cooling", 4, 3500),
     ("Balti, bhagona, chain, rope & misc. items", "L.S.", 19000),
 ]
-COWS, COW_RATE = 20, 85000
+COWS, COW_RATE = 20, 100000
 INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
 TRANSPORT = 7500
 PREOP = INS1 + TRANSPORT
@@ -51,12 +51,13 @@ wc = sum(a for _, a in WC) / L
 capex = bld + mac + live + pre
 cost = capex + wc
 
-OWN_PCT = 0.05  # PMEGP special category (OBC)
+OWN_PCT = 0.10  # promoter's contribution
 own_tl, own_wc = capex * OWN_PCT, wc * OWN_PCT
 tl, wcl = capex - own_tl, wc - own_wc
 own = own_tl + own_wc
 RATE = 0.105  # rate of interest on TL & WC
-SUBSIDY = 0.25 * cost  # PMEGP margin money (rural, special category)
+SUB_PCT = 0.35  # PMEGP margin money: rural, special category (OBC)
+SUBSIDY = SUB_PCT * cost
 
 # ---------------------------------------------------------- production & sales
 YIELD = 20  # Ltr/cow/day while in milk
@@ -297,7 +298,7 @@ s += [Paragraph("3. Fund Required from Bank under PMEGP Scheme (Rs. in Lacs)", H
 fr = [["S.No", "Particulars", "Amount"], ["1", "Term Loan", f2(tl)],
       ["2", "Working Capital", f2(wcl)], ["", "Total Bank Finance", f2(tl + wcl)]]
 s += [tbl(fr, [15, 120, 35], bold_rows=[3], right_from=2), Spacer(1, 6),
-      Paragraph(f"<b>Note:</b> Under PMEGP (rural area, special category - OBC) margin money subsidy @ 25% "
+      Paragraph(f"<b>Note:</b> Under PMEGP (rural area, special category - OBC) margin money subsidy @ {SUB_PCT:.0%} "
                 f"i.e. about Rs. {SUBSIDY:.2f} Lacs is admissible. It is kept as a 3-year lock-in "
                 "(TDR) with the bank and adjusted against the loan, hence not taken in the projections.", SM)]
 s += sign() + [PageBreak()]
@@ -342,7 +343,7 @@ s += [tbl(pt, [10, 125, 35], bold_rows=[3], right_from=2)]
 s += [Paragraph("6. Working Capital Limit", H3)]
 wt = [["Particulars", "Margin %", "Amount", "Bank", "Own"]]
 for p, a in WC:
-    wt.append([p, "5%", f0(a), f0(a * .95), f0(a * .05)])
+    wt.append([p, f"{OWN_PCT:.0%}", f0(a), f0(a * (1 - OWN_PCT)), f0(a * OWN_PCT)])
 wt.append(["Total", "", f0(wc * L), f0(wcl * L), f0(own_wc * L)])
 s += [tbl(wt, [62, 22, 28, 28, 28], bold_rows=[len(wt) - 1], right_from=1)]
 s += sign() + [PageBreak()]
@@ -516,7 +517,7 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_20_HF_Cows_27_Lakh.pdf"
+out = "Project_Report_20_HF_Cows_30_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
                   title="Project Report - 20 HF Cows Dairy", author=NAME).build(s, onFirstPage=on_page,
