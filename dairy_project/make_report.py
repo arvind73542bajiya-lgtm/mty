@@ -11,8 +11,8 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (PageBreak, Paragraph, SimpleDocTemplate,
                                 Spacer, Table, TableStyle)
 
-NAME = "SH. VISHRAM SINGH GURJAR S/O SH. RAMJI LAL GURJAR"
-ADDR = "Add: Khatana Ki Dhani, Palawas, Post-Jopada, Distt.-Dausa (Raj.)-303501"
+NAME = "SH. ______________________ S/O SH. ______________________"
+ADDR = "Add: ______________________________________________________________________"
 YEARS = 7
 L = 100000.0  # one lakh
 
@@ -60,7 +60,7 @@ tl = BANK_LOAN - wcl
 own_tl = capex - tl
 own = own_tl + own_wc  # promoter brings the balance
 RATE = 0.105  # rate of interest on TL & WC
-SUB_PCT = 0.35  # PMEGP margin money: rural, special category (OBC)
+SUB_PCT = 0.35  # PMEGP margin money: rural, special category
 SUBSIDY = SUB_PCT * cost
 
 # ---------------------------------------------------------- production & sales
@@ -252,7 +252,7 @@ s = []
 # ---- Page 1: cover + contents
 s += [Spacer(1, 30), Paragraph("PROJECT REPORT", H1), Paragraph("OF", HN), Spacer(1, 10),
       Paragraph(NAME, HN), Paragraph(ADDR, HA), Spacer(1, 6),
-      Paragraph("Pashupalan and Dairy Udhyog - 20 H.F. Cows Dairy Unit (with Infrastructure)", HN),
+      Paragraph("Dairy Udhyog - 20 H.F. Cows Dairy Unit (with Infrastructure)", HN),
       Paragraph(f"Total Project Cost : Rs. {cost:.2f} Lacs &nbsp;&nbsp;|&nbsp;&nbsp; Scheme : PMEGP", HA),
       Spacer(1, 14)]
 contents = [["S.No", "CONTENTS", "Page No."],
@@ -267,15 +267,15 @@ s += [tbl(contents, [15, 130, 22], right_from=2)] + sign() + [PageBreak()]
 
 # ---- Page 2: bio data
 s += header() + [Paragraph("Bio Data of Unit &amp; Promoter", H2)]
-bio = [["1", "Name of Project", "Pashupalan and Dairy Udhyog (20 H.F. Cows)"],
-       ["2", "Address", ADDR.replace("Add: ", "")],
+bio = [["1", "Name of Project", "Dairy Udhyog (20 H.F. Cows)"],
+       ["2", "Address", ("_" * 55 + "\n") * 2],
        ["3", "Proprietor", NAME],
-       ["4", "Status", "Proprietorship Firm (OBC)"],
+       ["4", "Status", "Proprietorship Firm (Category: ____________)"],
        ["5", "Business / Activity", "Dairy farming - sale of milk & gobar khad"],
        ["6", "Breed / Herd size", "Holstein Friesian (H.F.) cross-bred cows - 20 Nos (20 Ltr/day yielders)"],
        ["7", "Raw Materials", "Green & dry fodder, cattle feed, khal, mineral mixture - easily available locally"],
-       ["8", "Promoter Introduction", "Experienced in animal husbandry; already running a buffalo dairy unit"],
-       ["9", "Market Opinion", "Very good scope: Dausa is on the Jaipur-Agra highway; ready demand from "
+       ["8", "Promoter Introduction", "Experienced in animal husbandry"],
+       ["9", "Market Opinion", "Very good scope: ready demand from "
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
        ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x {YIELD} Ltr)\n"
                                      f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about {IN_MILK} cows in milk, {COWS - IN_MILK} dry)"],
@@ -305,14 +305,14 @@ s += [Paragraph("3. Fund Required from Bank under PMEGP Scheme (Rs. in Lacs)", H
 fr = [["S.No", "Particulars", "Amount"], ["1", "Term Loan", f2(tl)],
       ["2", "Working Capital", f2(wcl)], ["", "Total Bank Finance", f2(tl + wcl)]]
 s += [tbl(fr, [15, 120, 35], bold_rows=[3], right_from=2), Spacer(1, 6),
-      Paragraph(f"<b>Note:</b> Under PMEGP (rural area, special category - OBC) margin money subsidy @ {SUB_PCT:.0%} "
+      Paragraph(f"<b>Note:</b> Under PMEGP (rural area, special category - SC/ST/OBC/Women etc.) margin money subsidy @ {SUB_PCT:.0%} "
                 f"i.e. about Rs. {SUBSIDY:.2f} Lacs is admissible. It is kept as a 3-year lock-in "
                 "(TDR) with the bank and adjusted against the loan, hence not taken in the projections.", SM)]
 s += sign() + [PageBreak()]
 
 # ---- Page 4: land, building, machinery
 s += header() + [Paragraph("1. Factory Land", H3),
-                 Paragraph("Dairy unit situated at Village-Palawas, Tehsil &amp; Distt. Dausa (Raj.) - <b>Owned</b>", N),
+                 Paragraph("Dairy unit situated at Village ______________, Tehsil ______________, Distt. ______________ - <b>Owned</b>", N),
                  Paragraph("2. Building, Cattle Shed &amp; Infrastructure (Rates incl. material &amp; labour)", H3)]
 bt = [["S.N.", "Particulars", "Qty", "Unit", "Rate", "Amount"]]
 for i, (p, q, u, r, a) in enumerate(building, 1):
@@ -527,7 +527,7 @@ def on_page(canvas, doc):
 out = "Project_Report_20_HF_Cows_28_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
-                  title="Project Report - 20 HF Cows Dairy", author=NAME).build(s, onFirstPage=on_page,
+                  title="Project Report - 20 HF Cows Dairy", author="Dairy Udhyog").build(s, onFirstPage=on_page,
                                                                                onLaterPages=on_page)
 
 print(f"cost={cost:.2f} bld={bld:.2f} mac={mac:.2f} live={live:.2f} pre={pre:.2f} wc={wc:.2f}")
