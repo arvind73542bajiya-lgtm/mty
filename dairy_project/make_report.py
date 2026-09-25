@@ -65,8 +65,9 @@ SUBSIDY = SUB_PCT * cost
 # ---------------------------------------------------------- production & sales
 YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
-UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
-DAYS = 300
+UTIL = [0.75] * YEARS   # 300 Ltr/day: ~15 of 20 cows in milk at a time, 5 dry
+IN_MILK = round(COWS * UTIL[0])
+DAYS = 350
 MILK_P = 35
 KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
@@ -276,7 +277,7 @@ bio = [["1", "Name of Project", "Pashupalan and Dairy Udhyog (20 H.F. Cows)"],
        ["9", "Market Opinion", "Very good scope: Dausa is on the Jaipur-Agra highway; ready demand from "
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
        ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x {YIELD} Ltr)\n"
-                                     f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about 16 cows in milk, 4 dry)"],
+                                     f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about {IN_MILK} cows in milk, {COWS - IN_MILK} dry)"],
        ["11", "Employment", "3 persons (1 manager + 1 skilled + 1 un-skilled) + promoter & family"]]
 bio = [[a, b, Paragraph(c.replace("\n", "<br/>"), C)] for a, b, c in bio]
 s += [tbl(bio, [10, 42, 118], right_from=9, head=False)] + sign() + [PageBreak()]
@@ -359,7 +360,7 @@ s += header() + [Paragraph("STATEMENT OF PROJECTED COST OF PRODUCTION &amp; SALE
 bp = [["Name of Product", "Milk, Gobar Khad"],
       ["Name of Raw Materials", "Green fodder, bhusa, cattle feed, khal, mineral mixture"],
       ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x {YIELD} Ltr)"],
-      ["No. of Working Days", f"{DAYS} days milk sale in a year; ~80% cows in milk at a time"]]
+      ["No. of Working Days", f"{DAYS} days milk sale in a year; ~{UTIL[0]:.0%} cows in milk at a time"]]
 s += [tbl(bp, [50, 120], right_from=9, head=False)]
 ut = [["Utilisation", "Capacity %", "Ltr / Day", "Ltr / Year"]]
 for y in range(YEARS):
