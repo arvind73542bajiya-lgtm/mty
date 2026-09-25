@@ -1,7 +1,7 @@
-"""Generate the 23-lakh HF-cow dairy project report (PDF).
+"""Generate the 29-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_15_HF_Cows_23_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_29_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -15,16 +15,16 @@ NAME = "SH. ______________________ S/O SH. ______________________"
 ADDR = "Add: ______________________________________________________________________"
 YEARS = 7
 L = 100000.0  # one lakh
-COWS, COW_RATE = 15, 90000
+COWS, COW_RATE = 20, 90000
 
 # ---------------------------------------------------------------- capital cost
 building = [  # (particular, qty, unit, rate, amount)
-    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 45'", "1350", "Sq.ft", 200, 270000),
-    ("PCC floor with slope, anti-slip grooving & urine drain", "1350", "Sq.ft", 40, 54000),
-    ("Manger (khor) & water trough - brick & cement", "45", "R.ft", 700, 31500),
+    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 60'", "1800", "Sq.ft", 200, 360000),
+    ("PCC floor with slope, anti-slip grooving & urine drain", "1800", "Sq.ft", 40, 72000),
+    ("Manger (khor) & water trough - brick & cement", "60", "R.ft", 700, 42000),
     ("Feed / fodder store-cum-labour room 10' x 20'", "200", "Sq.ft", 400, 80000),
     ("Calf pen & sick-animal (isolation) pen", "L.S.", "", 31000, 31000),
-    ("Side / boundary wall (brick, 4.5 ft high)", "140", "R.ft", 250, 35000),
+    ("Side / boundary wall (brick, 4.5 ft high)", "160", "R.ft", 250, 40000),
     ("Dung pit & vermicompost beds", "2", "Nos", 15000, 30000),
     ("Electric fitting, lights & water pipeline", "L.S.", "", 35000, 35000),
 ]
@@ -33,9 +33,9 @@ machinery = [  # (particular, qty, rate)
     ("Electric chaff cutter with 2 HP motor", 1, 27000),
     ("Water motor / submersible pump 1.5 HP", 1, 18000),
     ("Water tank 2000 Ltr (PVC)", 1, 14000),
-    ("Milk cans 40 Ltr (aluminium)", 5, 3000),
+    ("Milk cans 40 Ltr (aluminium)", 6, 3000),
     ("Rubber cow mats", COWS, 2500),
-    ("Fans / foggers for summer cooling", 3, 3500),
+    ("Fans / foggers for summer cooling", 4, 3500),
     ("Balti, bhagona, chain, rope & misc. items", "L.S.", 19000),
 ]
 INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
@@ -66,7 +66,7 @@ SUBSIDY = SUB_PCT * cost
 # ---------------------------------------------------------- production & sales
 YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
-UTIL = [0.75] * YEARS   # ~75% of cows in milk at a time, rest dry
+UTIL = [0.80] * YEARS   # ~75% of cows in milk at a time, rest dry
 IN_MILK = round(COWS * UTIL[0])
 DAYS = 350
 MILK_P = 35
@@ -193,7 +193,7 @@ if payback is None:  # beyond projection period: extend at last year's accrual
     payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [3.50] * 7
+DRAW = [4.00, 4.20, 4.40, 4.50, 4.60, 4.80, 5.00]
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -525,7 +525,7 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_15_HF_Cows_23_Lakh.pdf"
+out = "Project_Report_20_HF_Cows_29_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
                   title=f"Project Report - {COWS} HF Cows Dairy", author="Dairy Udhyog").build(s, onFirstPage=on_page,
