@@ -1,7 +1,7 @@
-"""Generate the 29-lakh HF-cow dairy project report (PDF).
+"""Generate the 23-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_29_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_15_HF_Cows_23_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -15,15 +15,16 @@ NAME = "SH. ______________________ S/O SH. ______________________"
 ADDR = "Add: ______________________________________________________________________"
 YEARS = 7
 L = 100000.0  # one lakh
+COWS, COW_RATE = 15, 90000
 
 # ---------------------------------------------------------------- capital cost
 building = [  # (particular, qty, unit, rate, amount)
-    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 60'", "1800", "Sq.ft", 200, 360000),
-    ("PCC floor with slope, anti-slip grooving & urine drain", "1800", "Sq.ft", 40, 72000),
-    ("Manger (khor) & water trough - brick & cement", "60", "R.ft", 700, 42000),
+    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 45'", "1350", "Sq.ft", 200, 270000),
+    ("PCC floor with slope, anti-slip grooving & urine drain", "1350", "Sq.ft", 40, 54000),
+    ("Manger (khor) & water trough - brick & cement", "45", "R.ft", 700, 31500),
     ("Feed / fodder store-cum-labour room 10' x 20'", "200", "Sq.ft", 400, 80000),
     ("Calf pen & sick-animal (isolation) pen", "L.S.", "", 31000, 31000),
-    ("Side / boundary wall (brick, 4.5 ft high)", "160", "R.ft", 250, 40000),
+    ("Side / boundary wall (brick, 4.5 ft high)", "140", "R.ft", 250, 35000),
     ("Dung pit & vermicompost beds", "2", "Nos", 15000, 30000),
     ("Electric fitting, lights & water pipeline", "L.S.", "", 35000, 35000),
 ]
@@ -32,12 +33,11 @@ machinery = [  # (particular, qty, rate)
     ("Electric chaff cutter with 2 HP motor", 1, 27000),
     ("Water motor / submersible pump 1.5 HP", 1, 18000),
     ("Water tank 2000 Ltr (PVC)", 1, 14000),
-    ("Milk cans 40 Ltr (aluminium)", 6, 3000),
-    ("Rubber cow mats", 20, 2500),
-    ("Fans / foggers for summer cooling", 4, 3500),
+    ("Milk cans 40 Ltr (aluminium)", 5, 3000),
+    ("Rubber cow mats", COWS, 2500),
+    ("Fans / foggers for summer cooling", 3, 3500),
     ("Balti, bhagona, chain, rope & misc. items", "L.S.", 19000),
 ]
-COWS, COW_RATE = 20, 90000
 INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
 TRANSPORT = 7000
 PREOP = INS1 + TRANSPORT
@@ -66,11 +66,12 @@ SUBSIDY = SUB_PCT * cost
 # ---------------------------------------------------------- production & sales
 YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
-UTIL = [0.75] * YEARS   # 300 Ltr/day: ~15 of 20 cows in milk at a time, 5 dry
+UTIL = [0.75] * YEARS   # ~75% of cows in milk at a time, rest dry
 IN_MILK = round(COWS * UTIL[0])
 DAYS = 350
 MILK_P = 35
-KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
+DUNG_T = COWS * 20 * 365 / 1000  # fresh dung, tons/yr (20 kg/cow/day)
+KHAD_T, KHAD_P = round(DUNG_T * 0.41), 2000  # gobar khad tons/yr, Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
 
 prod, sales, milk_amt, khad_amt = [], [], [], []
@@ -192,7 +193,7 @@ if payback is None:  # beyond projection period: extend at last year's accrual
     payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [4.00] * 7
+DRAW = [1.10] * 7
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -252,7 +253,7 @@ s = []
 # ---- Page 1: cover + contents
 s += [Spacer(1, 30), Paragraph("PROJECT REPORT", H1), Paragraph("OF", HN), Spacer(1, 10),
       Paragraph(NAME, HN), Paragraph(ADDR, HA), Spacer(1, 6),
-      Paragraph("Dairy Udhyog - 20 H.F. Cows Dairy Unit (with Infrastructure)", HN),
+      Paragraph(f"Dairy Udhyog - {COWS} H.F. Cows Dairy Unit (with Infrastructure)", HN),
       Paragraph(f"Total Project Cost : Rs. {cost:.2f} Lacs &nbsp;&nbsp;|&nbsp;&nbsp; Scheme : PMEGP", HA),
       Spacer(1, 14)]
 contents = [["S.No", "CONTENTS", "Page No."],
@@ -267,17 +268,17 @@ s += [tbl(contents, [15, 130, 22], right_from=2)] + sign() + [PageBreak()]
 
 # ---- Page 2: bio data
 s += header() + [Paragraph("Bio Data of Unit &amp; Promoter", H2)]
-bio = [["1", "Name of Project", "Dairy Udhyog (20 H.F. Cows)"],
+bio = [["1", "Name of Project", f"Dairy Udhyog ({COWS} H.F. Cows)"],
        ["2", "Address", ("_" * 55 + "\n") * 2],
        ["3", "Proprietor", NAME],
        ["4", "Status", "Proprietorship Firm (Category: ____________)"],
        ["5", "Business / Activity", "Dairy farming - sale of milk & gobar khad"],
-       ["6", "Breed / Herd size", "Holstein Friesian (H.F.) cross-bred cows - 20 Nos (20 Ltr/day yielders)"],
+       ["6", "Breed / Herd size", f"Holstein Friesian (H.F.) cross-bred cows - {COWS} Nos ({YIELD} Ltr/day yielders)"],
        ["7", "Raw Materials", "Green & dry fodder, cattle feed, khal, mineral mixture - easily available locally"],
        ["8", "Promoter Introduction", "Experienced in animal husbandry"],
        ["9", "Market Opinion", "Very good scope: ready demand from "
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
-       ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x {YIELD} Ltr)\n"
+       ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day ({COWS} cows x {YIELD} Ltr)\n"
                                      f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about {IN_MILK} cows in milk, {COWS - IN_MILK} dry)"],
        ["11", "Employment", "3 persons (1 manager + 1 skilled + 1 un-skilled) + promoter & family"]]
 bio = [[a, b, Paragraph(c.replace("\n", "<br/>"), C)] for a, b, c in bio]
@@ -289,7 +290,7 @@ cp = [["S.No", "Particulars", "Amount"],
       ["1", "Land", "Owned"],
       ["2", "Building, Cattle Shed & Infrastructure", f2(bld)],
       ["3", "Plant & Machinery, Equipments", f2(mac)],
-      ["4", "Live Stock - 20 H.F. Cows", f2(live)],
+      ["4", f"Live Stock - {COWS} H.F. Cows", f2(live)],
       ["5", "Pre-operative (cattle insurance 1st yr & transportation)", f2(pre)],
       ["6", "Working Capital", f2(wc)],
       ["", "Total Cost of Project", f2(cost)]]
@@ -360,7 +361,7 @@ s += header() + [Paragraph("STATEMENT OF PROJECTED COST OF PRODUCTION &amp; SALE
                  Paragraph("Basic Parameters", H3)]
 bp = [["Name of Product", "Milk, Gobar Khad"],
       ["Name of Raw Materials", "Green fodder, bhusa, cattle feed, khal, mineral mixture"],
-      ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x {YIELD} Ltr)"],
+      ["Installed Capacity", f"{CAP_LPD} Ltr milk per day ({COWS} cows x {YIELD} Ltr)"],
       ["No. of Working Days", f"{DAYS} days milk sale in a year; ~{UTIL[0]:.0%} cows in milk at a time"]]
 s += [tbl(bp, [50, 120], right_from=9, head=False)]
 ut = [["Utilisation", "Capacity %", "Ltr / Day", "Ltr / Year"]]
@@ -375,7 +376,7 @@ st_ = [["Particulars", "Qty", "Unit", "Rate", "Amount (Rs.)"],
        ["", "", "", "Say Rs.", f"{sales[0]:.2f} Lacs"]]
 s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[3], right_from=1),
       Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the average realisation from dairy collection "
-                f"centre and direct sale to households / sweet shops. 20 cows give ~146 ton fresh dung a year, giving ~{KHAD_T} ton gobar khad sold to "
+                f"centre and direct sale to households / sweet shops. {COWS} cows give ~{DUNG_T:.0f} ton fresh dung a year, giving ~{KHAD_T} ton gobar khad sold to "
                 f"farmers @ Rs. {KHAD_P:,}/ton. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
 s += sign() + [PageBreak()]
 
@@ -524,10 +525,10 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_20_HF_Cows_29_Lakh.pdf"
+out = "Project_Report_15_HF_Cows_23_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
-                  title="Project Report - 20 HF Cows Dairy", author="Dairy Udhyog").build(s, onFirstPage=on_page,
+                  title=f"Project Report - {COWS} HF Cows Dairy", author="Dairy Udhyog").build(s, onFirstPage=on_page,
                                                                                onLaterPages=on_page)
 
 print(f"cost={cost:.2f} bld={bld:.2f} mac={mac:.2f} live={live:.2f} pre={pre:.2f} wc={wc:.2f}")
