@@ -96,7 +96,7 @@ feed_rows = [
 ]
 feed1 = sum(q * r for _, q, _, r in feed_rows) / L
 
-staff = [("Manager", 1, 18000), ("Skilled labour / milker", 1, 15000), ("Un-skilled labour", 1, 10000)]
+staff = [("Skilled labour / milker", 1, 15000), ("Un-skilled labour", 1, 10000)]
 wages1 = sum(n * s for _, n, s in staff) * 12 / L
 power1 = (6000 * 8 + 12000) / L          # 6000 units @ Rs 8 + diesel/misc
 vet1 = (COWS * 3000 + COWS * 500) / L    # medicine/vet + AI/deworming/vaccination
@@ -193,7 +193,7 @@ if payback is None:  # beyond projection period: extend at last year's accrual
     payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [1.10] * 7
+DRAW = [3.50] * 7
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -280,7 +280,7 @@ bio = [["1", "Name of Project", f"Dairy Udhyog ({COWS} H.F. Cows)"],
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
        ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day ({COWS} cows x {YIELD} Ltr)\n"
                                      f"Utilised: {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%} - about {IN_MILK} cows in milk, {COWS - IN_MILK} dry)"],
-       ["11", "Employment", "3 persons (1 manager + 1 skilled + 1 un-skilled) + promoter & family"]]
+       ["11", "Employment", "2 persons (1 skilled + 1 un-skilled) + promoter & family"]]
 bio = [[a, b, Paragraph(c.replace("\n", "<br/>"), C)] for a, b, c in bio]
 s += [tbl(bio, [10, 42, 118], right_from=9, head=False)] + sign() + [PageBreak()]
 
@@ -402,7 +402,7 @@ for p, n, sal in staff:
     wt2.append([p, str(n), f0(sal), f0(n * sal)])
 wt2.append(["Total (x 12 months)", "", "", f"{wages1:.2f} Lacs"])
 s += [tbl(wt2, [80, 20, 35, 35], bold_rows=[len(wt2) - 1], right_from=1),
-      Paragraph("Promoter &amp; family also help in day-to-day work.", SM)]
+      Paragraph("Management &amp; accounts looked after by the promoter; family also helps in day-to-day work.", SM)]
 s += [Paragraph("(e) Other Admin. Expenses", H3)]
 at = [[p, f0(a)] for p, a in admin_items] + [["Total  (Say Rs. Lacs)", f"{admin1:.2f}"]]
 s += [tbl(at, [135, 35], bold_rows=[len(at) - 1], head=False)]
@@ -514,7 +514,7 @@ s += [tbl(cf, W5, bold_rows=[7, 14, 17], right_from=1)]
 s += [Spacer(1, 8), Paragraph("Conclusion", H3),
       Paragraph(f"The project is technically feasible and financially viable. With average D.S.C.R. of "
                 f"{avg_dscr:.2f}, the unit can {'comfortably ' if avg_dscr >= 1.5 else ''}repay the bank loan within {YEARS} years, "
-                "besides generating employment for 3 persons in the village. Bank finance is recommended.", N)]
+                f"besides generating employment for {sum(n for _, n, _ in staff)} persons in the village. Bank finance is recommended.", N)]
 s += sign()
 
 
