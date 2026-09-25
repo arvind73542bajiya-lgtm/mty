@@ -62,13 +62,17 @@ CAP_LPD = COWS * YIELD  # installed capacity
 UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
 DAYS = 360
 MILK_P = 30
+KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
 
-prod, sales = [], []
+prod, sales, milk_amt, khad_amt = [], [], [], []
 for y in range(YEARS):
     litres = CAP_LPD * UTIL[y] * DAYS
+    f = (1 + ESC_SALE) ** y
     prod.append(litres)
-    sales.append(litres * MILK_P * (1 + ESC_SALE) ** y / L)
+    milk_amt.append(litres * MILK_P * f / L)
+    khad_amt.append(KHAD_T * KHAD_P * f / L)
+    sales.append(milk_amt[y] + khad_amt[y])
 
 # --------------------------------------------------------------- feed (yr 1)
 green_q = COWS * 20 * 365 / 100  # 20 kg/cow/day
@@ -257,7 +261,7 @@ bio = [["1", "Name of Project", "Pashupalan and Dairy Udhyog (20 H.F. Cows)"],
        ["2", "Address", ADDR.replace("Add: ", "")],
        ["3", "Proprietor", NAME],
        ["4", "Status", "Proprietorship Firm (OBC)"],
-       ["5", "Business / Activity", "Dairy farming - sale of milk"],
+       ["5", "Business / Activity", "Dairy farming - sale of milk & gobar khad"],
        ["6", "Breed / Herd size", "Holstein Friesian (H.F.) cross-bred cows - 20 Nos (20 Ltr/day yielders)"],
        ["7", "Raw Materials", "Green & dry fodder, cattle feed, khal, mineral mixture - easily available locally"],
        ["8", "Promoter Introduction", "Experienced in animal husbandry; already running a buffalo dairy unit"],
@@ -344,7 +348,7 @@ s += sign() + [PageBreak()]
 # ---- Page 6: basic parameters & sales
 s += header() + [Paragraph("STATEMENT OF PROJECTED COST OF PRODUCTION &amp; SALES REALISATION", H2),
                  Paragraph("Basic Parameters", H3)]
-bp = [["Name of Product", "Milk"],
+bp = [["Name of Product", "Milk, Gobar Khad"],
       ["Name of Raw Materials", "Green fodder, bhusa, cattle feed, khal, mineral mixture"],
       ["Installed Capacity", f"{CAP_LPD} Ltr milk per day (20 cows x {YIELD} Ltr)"],
       ["No. of Working Days", f"{DAYS} days (dairy works all days; ~80% cows in milk at a time)"]]
@@ -355,12 +359,14 @@ for y in range(YEARS):
 s += [Spacer(1, 4), tbl(ut, [45, 35, 35, 45], right_from=1)]
 s += [Paragraph("Calculation of Sales Realisation - 1st Year", H3)]
 st_ = [["Particulars", "Qty", "Unit", "Rate", "Amount (Rs.)"],
-       [f"Milk sale ({CAP_LPD * UTIL[0]:.0f} Ltr/day x {DAYS} days)", f0(prod[0]), "Ltr", f0(MILK_P), f0(sales[0] * L)],
+       [f"Milk sale ({CAP_LPD * UTIL[0]:.0f} Ltr/day x {DAYS} days)", f0(prod[0]), "Ltr", f0(MILK_P), f0(milk_amt[0] * L)],
+       ["Gobar khad (from dung pit)", f0(KHAD_T), "Ton", f0(KHAD_P), f0(khad_amt[0] * L)],
        ["Net Sales Realisation", "", "", "", f0(sales[0] * L)],
        ["", "", "", "Say Rs.", f"{sales[0]:.2f} Lacs"]]
-s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[2], right_from=1),
+s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[3], right_from=1),
       Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the present dairy rate for cow milk. Whole milk is sold to the dairy "
-                f"collection centre; no other product is taken. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
+                f"collection centre. 20 cows give ~146 ton fresh dung a year, giving ~{KHAD_T} ton gobar khad sold to "
+                f"farmers @ Rs. {KHAD_P:,}/ton. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
 s += sign() + [PageBreak()]
 
 # ---- Page 7: cost of production (1st yr)
