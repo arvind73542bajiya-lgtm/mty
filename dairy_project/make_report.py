@@ -1,7 +1,7 @@
-"""Generate the 25-lakh HF-cow dairy project report (PDF).
+"""Generate the 27-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_25_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_27_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -37,8 +37,10 @@ machinery = [  # (particular, qty, rate)
     ("Fans / foggers for summer cooling", 4, 3500),
     ("Balti, bhagona, chain, rope & misc. items", "L.S.", 19000),
 ]
-COWS, COW_RATE = 20, 75000
-PREOP = 40000  # cattle insurance (1st yr) + transportation
+COWS, COW_RATE = 20, 85000
+INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
+TRANSPORT = 7500
+PREOP = INS1 + TRANSPORT
 WC = [("Feed & fodder stock", 70000), ("Sundry receivable (milk bills)", 50000), ("Cash in hand", 20000)]
 
 bld = sum(r[4] for r in building) / L
@@ -333,8 +335,8 @@ s += [tbl(lt, [10, 72, 12, 18, 24, 34], bold_rows=[1], right_from=2),
                 "remains uniform round the year.", SM)]
 s += [Paragraph("5. Pre-operative Expenses", H3)]
 pt = [["S.N.", "Particulars", "Amount"],
-      ["1", f"Cattle insurance 1st year @ ~2.5% of Rs. {live:.2f} Lacs", f0(37500)],
-      ["2", "Transportation of cows", f0(PREOP - 37500)],
+      ["1", f"Cattle insurance 1st year @ ~2.5% of Rs. {live:.2f} Lacs", f0(INS1)],
+      ["2", "Transportation of cows", f0(TRANSPORT)],
       ["", "Total (Or Say)", f"{pre:.2f} Lacs"]]
 s += [tbl(pt, [10, 125, 35], bold_rows=[3], right_from=2)]
 s += [Paragraph("6. Working Capital Limit", H3)]
@@ -514,7 +516,7 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_20_HF_Cows_25_Lakh.pdf"
+out = "Project_Report_20_HF_Cows_27_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
                   title="Project Report - 20 HF Cows Dairy", author=NAME).build(s, onFirstPage=on_page,
