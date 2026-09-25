@@ -1,7 +1,7 @@
-"""Generate the 30-lakh HF-cow dairy project report (PDF).
+"""Generate the 28-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_30_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_28_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -37,7 +37,7 @@ machinery = [  # (particular, qty, rate)
     ("Fans / foggers for summer cooling", 4, 3500),
     ("Balti, bhagona, chain, rope & misc. items", "L.S.", 19000),
 ]
-COWS, COW_RATE = 20, 100000
+COWS, COW_RATE = 20, 90000
 INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
 TRANSPORT = 7000
 PREOP = INS1 + TRANSPORT
@@ -51,10 +51,13 @@ wc = sum(a for _, a in WC) / L
 capex = bld + mac + live + pre
 cost = capex + wc
 
-OWN_PCT = 0.10  # promoter's contribution
-own_tl, own_wc = capex * OWN_PCT, wc * OWN_PCT
-tl, wcl = capex - own_tl, wc - own_wc
-own = own_tl + own_wc
+BANK_LOAN = 25.00  # total bank finance (T.L. + W.C.), Rs lakh
+OWN_PCT = 0.10     # margin on working capital
+wcl = wc * (1 - OWN_PCT)
+own_wc = wc - wcl
+tl = BANK_LOAN - wcl
+own_tl = capex - tl
+own = own_tl + own_wc  # promoter brings the balance
 RATE = 0.105  # rate of interest on TL & WC
 SUB_PCT = 0.35  # PMEGP margin money: rural, special category (OBC)
 SUBSIDY = SUB_PCT * cost
@@ -289,7 +292,7 @@ cp = [["S.No", "Particulars", "Amount"],
 s += [tbl(cp, [15, 120, 35], bold_rows=[7], right_from=2)]
 s += [Paragraph("2. Means of Finance (Rs. in Lacs)", H3)]
 mf = [["S.No", "Particulars", "Amount"],
-      ["1", f"Promoter's Contribution @ {OWN_PCT:.0%}", f2(own)],
+      ["1", f"Promoter's Contribution ({own / cost:.1%})", f2(own)],
       ["2", "Term Loan from Bank", f2(tl)],
       ["3", "Working Capital Loan (CC Limit)", f2(wcl)],
       ["", "Total", f2(own + tl + wcl)]]
@@ -517,7 +520,7 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_20_HF_Cows_30_Lakh.pdf"
+out = "Project_Report_20_HF_Cows_28_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
                   title="Project Report - 20 HF Cows Dairy", author=NAME).build(s, onFirstPage=on_page,
