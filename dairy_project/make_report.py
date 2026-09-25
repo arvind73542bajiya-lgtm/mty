@@ -61,7 +61,7 @@ CAP_LPD = COWS * 15  # installed: 15 Ltr/cow/day
 UTIL = [0.65, 0.70, 0.75, 0.80, 0.80, 0.80, 0.80]
 DAYS = 360
 MILK_P, PANEER_P, KHAD_P = 30, 320, 2000
-PANEER_MILK, PANEER_YIELD = 25000, 5.5  # Ltr of milk converted, Ltr per kg
+PANEER_MILK, PANEER_YIELD = 31000, 5.5  # Ltr of milk converted, Ltr per kg
 KHAD_T = 60
 ESC_SALE = 0.03  # annual price escalation on sales
 
@@ -90,7 +90,7 @@ feed_rows = [
 ]
 feed1 = sum(q * r for _, q, _, r in feed_rows) / L
 
-staff = [("Skilled worker / milker", 1, 12000), ("Un-skilled labour", 2, 9000)]
+staff = [("Manager", 1, 18000), ("Skilled labour / milker", 1, 15000), ("Un-skilled labour", 1, 10000)]
 wages1 = sum(n * s for _, n, s in staff) * 12 / L
 power1 = (6000 * 8 + 12000) / L          # 6000 units @ Rs 8 + diesel/misc
 vet1 = (COWS * 3000 + COWS * 500) / L    # medicine/vet + AI/deworming/vaccination
@@ -275,7 +275,7 @@ bio = [["1", "Name of Project", "Pashupalan and Dairy Udhyog (20 H.F. Cows)"],
                                "Saras dairy collection centres, sweet shops & households. Demand increasing day by day."],
        ["10", "Production Capacity", f"Installed: {CAP_LPD} Ltr milk/day (20 cows x 15 Ltr)\n"
                                      f"Utilised (1st Yr): {CAP_LPD * UTIL[0]:.0f} Ltr/day ({UTIL[0]:.0%})"],
-       ["11", "Employment", "3 persons (1 skilled + 2 un-skilled) + promoter & family"]]
+       ["11", "Employment", "3 persons (1 manager + 1 skilled + 1 un-skilled) + promoter & family"]]
 bio = [[a, b, Paragraph(c.replace("\n", "<br/>"), C)] for a, b, c in bio]
 s += [tbl(bio, [10, 42, 118], right_from=9, head=False)] + sign() + [PageBreak()]
 
@@ -398,7 +398,7 @@ for p, n, sal in staff:
     wt2.append([p, str(n), f0(sal), f0(n * sal)])
 wt2.append(["Total (x 12 months)", "", "", f"{wages1:.2f} Lacs"])
 s += [tbl(wt2, [80, 20, 35, 35], bold_rows=[len(wt2) - 1], right_from=1),
-      Paragraph("Management &amp; accounts looked after by the promoter himself.", SM)]
+      Paragraph("Promoter &amp; family also help in day-to-day work.", SM)]
 s += [Paragraph("(e) Other Admin. Expenses", H3)]
 at = [[p, f0(a)] for p, a in admin_items] + [["Total  (Say Rs. Lacs)", f"{admin1:.2f}"]]
 s += [tbl(at, [135, 35], bold_rows=[len(at) - 1], head=False)]
