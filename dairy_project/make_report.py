@@ -63,7 +63,7 @@ YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
 UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
 DAYS = 360
-MILK_P = 40
+MILK_P = 35
 KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
 
