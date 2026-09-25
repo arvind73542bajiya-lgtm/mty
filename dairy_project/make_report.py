@@ -63,7 +63,7 @@ YIELD = 20  # Ltr/cow/day while in milk
 CAP_LPD = COWS * YIELD  # installed capacity
 UTIL = [0.80] * YEARS   # ~16 of 20 cows in milk at a time, 4 dry
 DAYS = 360
-MILK_P = 30
+MILK_P = 40
 KHAD_T, KHAD_P = 60, 2000  # gobar khad: tons/yr (from ~146 t fresh dung), Rs/ton
 ESC_SALE = 0.03  # annual price escalation on sales
 
@@ -184,7 +184,7 @@ for y in range(YEARS):
     cum += pl["gca"][y]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [1.00, 1.20, 1.40, 1.50, 1.60, 1.80, 2.00]
+DRAW = [6.00, 6.50, 7.00, 7.50, 8.00, 8.50, 9.00]
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -366,8 +366,8 @@ st_ = [["Particulars", "Qty", "Unit", "Rate", "Amount (Rs.)"],
        ["Net Sales Realisation", "", "", "", f0(sales[0] * L)],
        ["", "", "", "Say Rs.", f"{sales[0]:.2f} Lacs"]]
 s += [tbl(st_, [70, 25, 15, 20, 40], bold_rows=[3], right_from=1),
-      Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the present dairy rate for cow milk. Whole milk is sold to the dairy "
-                f"collection centre. 20 cows give ~146 ton fresh dung a year, giving ~{KHAD_T} ton gobar khad sold to "
+      Paragraph(f"Milk rate Rs. {MILK_P}/Ltr is the average realisation from dairy collection "
+                f"centre and direct sale to households / sweet shops. 20 cows give ~146 ton fresh dung a year, giving ~{KHAD_T} ton gobar khad sold to "
                 f"farmers @ Rs. {KHAD_P:,}/ton. Selling prices escalated @ {ESC_SALE:.0%} p.a. in later years.", SM)]
 s += sign() + [PageBreak()]
 
