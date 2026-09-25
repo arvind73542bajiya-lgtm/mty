@@ -51,7 +51,8 @@ wc = sum(a for _, a in WC) / L
 capex = bld + mac + live + pre
 cost = capex + wc
 
-BANK_LOAN = 25.00  # total bank finance (T.L. + W.C.), Rs lakh
+PROMOTER = 5.00    # promoter's contribution, Rs lakh
+BANK_LOAN = cost - PROMOTER  # total bank finance (T.L. + W.C.)
 OWN_PCT = 0.10     # margin on working capital
 wcl = wc * (1 - OWN_PCT)
 own_wc = wc - wcl
