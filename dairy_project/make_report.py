@@ -39,7 +39,7 @@ machinery = [  # (particular, qty, rate)
 ]
 COWS, COW_RATE = 20, 100000
 INS1 = COWS * COW_RATE * 0.025  # cattle insurance 1st yr @ 2.5%
-TRANSPORT = 7500
+TRANSPORT = 7000
 PREOP = INS1 + TRANSPORT
 WC = [("Feed & fodder stock", 70000), ("Sundry receivable (milk bills)", 50000), ("Cash in hand", 20000)]
 
