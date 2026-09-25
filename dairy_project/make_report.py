@@ -86,7 +86,7 @@ dry_q = COWS * 5 * 365 / 100     # 5 kg/cow/day
 conc_q = (CAP_LPD * UTIL[0] / 2.5 + COWS * 1.5) * 365 / 100  # 1 kg per 2.5 L + 1.5 kg maintenance
 min_kg = COWS * 0.05 * 365
 feed_rows = [
-    ("Green fodder from own field (no cash cost) @ 20 kg/cow/day", green_q, "Qtl", 0),
+    ("Green fodder from own field (cost of cultivation) @ 20 kg/cow/day", green_q, "Qtl", 100),
     ("Dry fodder - bhusa / kadbi @ 5 kg/cow/day", dry_q, "Qtl", 800),
     ("Concentrate - cattle feed, khal, dana (1 kg per 2.5 L milk + 1.5 kg)", conc_q, "Qtl", 2500),
     ("Mineral mixture & salt @ 50 g/cow/day", min_kg, "Kg", 120),
