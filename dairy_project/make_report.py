@@ -1,7 +1,7 @@
-"""Generate the 28-lakh HF-cow dairy project report (PDF).
+"""Generate the 29-lakh HF-cow dairy project report (PDF).
 
 All figures are computed here so every table in the PDF stays consistent.
-Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_28_Lakh.pdf
+Run: python3 make_report.py  ->  writes Project_Report_20_HF_Cows_29_Lakh.pdf
 """
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -18,7 +18,7 @@ L = 100000.0  # one lakh
 
 # ---------------------------------------------------------------- capital cost
 building = [  # (particular, qty, unit, rate, amount)
-    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 60'", "1800", "Sq.ft", 150, 270000),
+    ("Cattle shed - steel pipe structure with GI/tin sheet roof, 30' x 60'", "1800", "Sq.ft", 200, 360000),
     ("PCC floor with slope, anti-slip grooving & urine drain", "1800", "Sq.ft", 40, 72000),
     ("Manger (khor) & water trough - brick & cement", "60", "R.ft", 700, 42000),
     ("Feed / fodder store-cum-labour room 10' x 20'", "200", "Sq.ft", 400, 80000),
@@ -29,7 +29,7 @@ building = [  # (particular, qty, unit, rate, amount)
 ]
 machinery = [  # (particular, qty, rate)
     ("Milking machine (double bucket, electric)", 1, 55000),
-    ("Electric chaff cutter with 2 HP motor", 1, 32000),
+    ("Electric chaff cutter with 2 HP motor", 1, 27000),
     ("Water motor / submersible pump 1.5 HP", 1, 18000),
     ("Water tank 2000 Ltr (PVC)", 1, 14000),
     ("Milk cans 40 Ltr (aluminium)", 6, 3000),
@@ -89,9 +89,9 @@ conc_q = (CAP_LPD * UTIL[0] / 2.5 + COWS * 1.5) * 365 / 100  # 1 kg per 2.5 L + 
 min_kg = COWS * 0.05 * 365
 feed_rows = [
     ("Green fodder from own field (cost of cultivation) @ 20 kg/cow/day", green_q, "Qtl", 100),
-    ("Dry fodder - bhusa / kadbi @ 5 kg/cow/day", dry_q, "Qtl", 800),
-    ("Concentrate - cattle feed, khal, dana (1 kg per 2.5 L milk + 1.5 kg)", conc_q, "Qtl", 2500),
-    ("Mineral mixture & salt @ 50 g/cow/day", min_kg, "Kg", 120),
+    ("Dry fodder - bhusa / kadbi @ 5 kg/cow/day", dry_q, "Qtl", 1000),
+    ("Concentrate - cattle feed, khal, dana (1 kg per 2.5 L milk + 1.5 kg)", conc_q, "Qtl", 2700),
+    ("Mineral mixture & salt @ 50 g/cow/day", min_kg, "Kg", 170),
 ]
 feed1 = sum(q * r for _, q, _, r in feed_rows) / L
 
@@ -192,7 +192,7 @@ if payback is None:  # beyond projection period: extend at last year's accrual
     payback = YEARS + (cost - cum) / pl["gca"][-1]
 
 # -------------------------------------------------------------- cash flow
-DRAW = [4.00, 4.20, 4.40, 4.50, 4.60, 4.80, 5.00]
+DRAW = [4.00] * 7
 cf_rows = []
 opening = 0.0
 for y in range(YEARS):
@@ -524,7 +524,7 @@ def on_page(canvas, doc):
     canvas.restoreState()
 
 
-out = "Project_Report_20_HF_Cows_28_Lakh.pdf"
+out = "Project_Report_20_HF_Cows_29_Lakh.pdf"
 SimpleDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                   topMargin=14 * mm, bottomMargin=16 * mm,
                   title="Project Report - 20 HF Cows Dairy", author="Dairy Udhyog").build(s, onFirstPage=on_page,
