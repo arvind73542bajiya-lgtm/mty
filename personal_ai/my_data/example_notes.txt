@@ -1,0 +1,7 @@
+Ye ek example file hai. Is folder (my_data) mein apni .txt ya .md files daaliye,
+jaise apne farm ki details, rates, contacts, roz ke notes. chat.py inhe padh kar
+aapke sawalon ka jawab aapki apni jaankari ke hisaab se dega.
+
+Example:
+- Farm mein 20 HF gaaye hain, lagbhag 300 litre doodh roz.
+- Doodh ka rate: dairy ko Rs 40/litre.
