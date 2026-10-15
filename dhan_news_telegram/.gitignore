@@ -1,2 +1,3 @@
 config.json
 seen_news.json
+__pycache__/
